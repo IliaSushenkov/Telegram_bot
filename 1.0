@@ -1,0 +1,79 @@
+using System;
+using System.Collections.Generic;
+using Telegram.Bot;
+using Telegram.Bot.Args;
+using Telegram.Bot.Types.ReplyMarkups;
+
+
+
+namespace Telegram_Bot
+{
+    class Program
+    {
+        private static string Token { get; set; } = "2124351532:AAFXLsgP2hzYDxcy6LNw7GaHMEQ2btCJjyM";
+        private static TelegramBotClient client;
+
+        static void Main(string[] args)
+        {
+            client = new TelegramBotClient(Token);
+            client.StartReceiving();
+            client.OnMessage += OnMessageHandler;
+            Console.ReadLine();
+            client.StopReceiving();
+        }
+
+
+        private static async void OnMessageHandler(object sender, MessageEventArgs e)
+
+        {
+
+            var msg = e.Message;
+            string useFirstrName = msg.From.FirstName;
+            if (msg.Text != null)
+            {
+                Console.WriteLine($"Сообщение пользователя: {msg.Text}");
+                switch (msg.Text)
+                {
+                    case "Обо мне":
+                        await client.SendTextMessageAsync(
+                            chatId: msg.Chat.Id,
+                            text: $"Здравствуйте, {useFirstrName} \nМеня зовут Джарвис, моя задача -рассказать о моем создателе. " +
+                            $"Моего создателя зовут Сушенков Илья, студент 4-курса Белорусского Государственного Экономического Университета специальность - Экономечестка Информатика. " +
+                            $"Недавно Илья закончил курсы в SkillBox по направлению 'С-Sharp Developer', в ходе обучения он изучил: ASP.NET, WPF, .NET Framework, Unity, ООП. " +
+                            $"В Университете он изучил SQL, работал в MySQL.Workbench. Помимо всего этого на данных момент мой создатель усердно изучает Unity." +
+                            $"\nEго контакты:" +
+                            $"\n Номер:  80297876757, \nTelegarm: @Dockiey, \nMail: iliasushenkov@gmail.com " +
+                            $"\nCсылка на GitHub с кодом этого бота: https://github.com/IliaSushenkov/Telegram_bot.git",
+                            replyMarkup: GetButtons());
+                        break;
+
+                    case "Есть пару игр":
+                        await client.SendTextMessageAsync(
+                            chatId: msg.Chat.Id,
+                            text: " Пока я не умею играть в игры, в скором времени мой создатель это исправит. Но у хозяина есть другие игры," +
+                            "которые вы можете посмотреть тут:\n https://github.com/IliaSushenkov/Easy-game.git",
+                    replyMarkup: GetButtons());
+                        break;
+
+                          default:
+                        await client.SendTextMessageAsync(msg.Chat.Id, "Хотите просто пообщаться? К сожалению, мой функционал ПОКА ограничен, но мой создать трудиться, чтобы доработать меня",
+                    replyMarkup: GetButtons());
+                        break;
+                }
+                
+            }
+        }
+
+        private static IReplyMarkup GetButtons()
+        {
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<List<KeyboardButton>>
+                {
+                    new List<KeyboardButton>{ new KeyboardButton { Text = "Обо мне"}, new KeyboardButton { Text = "Есть пару игр"} },    
+                }
+            };
+        }
+
+    }
+}
